@@ -16,7 +16,7 @@
     "panels": [
       {
         "id": "pomodoro",
-        "title": "Pomodoro",
+        "title": "🍅 Pomodoro",
         "icon": "Timer",
         "entry": "panel.html"
       }
