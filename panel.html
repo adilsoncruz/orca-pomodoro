@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pomodoro</title>
+  <style>
+    :root { color-scheme: dark; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    body { margin: 0; padding: 20px; background: #111827; color: #e5e7eb; }
+    .card { max-width: 360px; margin: auto; text-align: center; }
+    h1 { margin: 0 0 8px; font-size: 18px; }
+    #phase { color: #93c5fd; font-size: 13px; margin-bottom: 18px; }
+    #time { font-variant-numeric: tabular-nums; font-size: 64px; line-height: 1; letter-spacing: 2px; margin: 18px 0 24px; }
+    button, input { border: 1px solid #374151; border-radius: 8px; background: #1f2937; color: inherit; padding: 9px 12px; font: inherit; }
+    button { cursor: pointer; }
+    button:hover { background: #374151; }
+    .primary { background: #2563eb; border-color: #3b82f6; }
+    .primary:hover { background: #1d4ed8; }
+    .actions { display: flex; justify-content: center; gap: 8px; }
+    .settings { display: flex; justify-content: center; gap: 8px; margin-top: 22px; font-size: 12px; }
+    input { width: 48px; text-align: center; }
+    #count { color: #9ca3af; font-size: 12px; margin-top: 18px; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>Pomodoro Focus</h1>
+    <div id="phase">Focus</div>
+    <div id="time">25:00</div>
+    <div class="actions">
+      <button id="toggle" class="primary">Start</button>
+      <button id="reset">Reset</button>
+      <button id="skip">Skip</button>
+    </div>
+    <div class="settings">
+      <label>Focus <input id="focus" type="number" min="1" max="120" value="25" /></label>
+      <label>Break <input id="break" type="number" min="1" max="60" value="5" /></label>
+    </div>
+    <div id="count">Completed: 0</div>
+  </main>
+  <script>
+    const state = { phase: 'Focus', running: false, remaining: 25 * 60, completed: 0 };
+    const $ = (id) => document.getElementById(id);
+    let interval;
+    function render() {
+      const minutes = Math.floor(state.remaining / 60).toString().padStart(2, '0');
+      const seconds = (state.remaining % 60).toString().padStart(2, '0');
+      $('time').textContent = `${minutes}:${seconds}`;
+      $('phase').textContent = state.phase;
+      $('toggle').textContent = state.running ? 'Pause' : 'Start';
+      $('count').textContent = `Completed: ${state.completed}`;
+      document.title = `${minutes}:${seconds} — Pomodoro`;
+    }
+    function durationFor(phase) {
+      return Number($(phase === 'Focus' ? 'focus' : 'break').value || 1) * 60;
+    }
+    function switchPhase() {
+      if (state.phase === 'Focus') state.completed += 1;
+      state.phase = state.phase === 'Focus' ? 'Break' : 'Focus';
+      state.remaining = durationFor(state.phase);
+      try { new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA=').play(); } catch (_) {}
+    }
+    function tick() {
+      if (!state.running) return;
+      if (state.remaining > 0) state.remaining -= 1;
+      if (state.remaining === 0) switchPhase();
+      render();
+    }
+    $('toggle').onclick = () => { state.running = !state.running; render(); };
+    $('reset').onclick = () => { state.running = false; state.phase = 'Focus'; state.remaining = durationFor('Focus'); render(); };
+    $('skip').onclick = () => { switchPhase(); render(); };
+    $('focus').onchange = $('break').onchange = () => { if (!state.running) state.remaining = durationFor(state.phase); render(); };
+    interval = setInterval(tick, 1000);
+    render();
+  </script>
+</body>
+</html>

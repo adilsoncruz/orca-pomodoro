@@ -1,0 +1,28 @@
+{
+  "manifestVersion": 1,
+  "id": "pomodoro",
+  "publisher": "adilsoncruz",
+  "name": "Pomodoro Focus",
+  "version": "0.1.0",
+  "description": "A focused Pomodoro timer inside Orca.",
+  "author": {
+    "name": "Adilson Cruz"
+  },
+  "engines": {
+    "orca": ">=1.4.0"
+  },
+  "pluginApi": 1,
+  "contributes": {
+    "panels": [
+      {
+        "id": "pomodoro",
+        "title": "Pomodoro",
+        "icon": "Timer",
+        "entry": "panel.html"
+      }
+    ],
+    "commands": [],
+    "events": []
+  },
+  "capabilities": []
+}
